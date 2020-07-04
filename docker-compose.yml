@@ -3,6 +3,7 @@ version: '3'
 services:
   asterisk:
     image: andrewwyh/asterisk-docker
+    restart: always    
     volumes:
       - "${PWD}/etc/asterisk/:/etc/asterisk:rw"
       - "${PWD}/log/asterisk:/var/log/asterisk"
@@ -89,6 +90,7 @@ services:
     restart: always
   webserver:
       image: nginx:alpine
+      restart: always    
       working_dir: /application
       volumes:
           - ./laravel/application:/application
@@ -97,6 +99,7 @@ services:
        - "80:80"
   php-fpm:
       build: ./laravel/sourcefiles/php-fpm
+      restart: always    
       working_dir: /application
       volumes:
         - ./laravel/application:/application
