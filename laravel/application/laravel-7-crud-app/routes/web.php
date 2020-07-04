@@ -13,9 +13,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'EndpointController@index');
+Route::get('/', 'EndpointController@index')->middleware('auth');
 
-Route::resource('endpoints', 'EndpointController');
-Route::get('/contexts', 'ContextController@show'); 
-//Route::resource('contexts','ContextController'); //unused at the moment, meant to replace the "get" above
+Route::resource('endpoints', 'EndpointController')->middleware('auth');
+Route::get('/contexts', 'ContextController@show')->middleware('auth');
 
+//Not using the default routes
+/*Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
+*/
+
+Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('login', 'Auth\LoginController@login');
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+
+// Registration Routes...
+// Disabled since our website is public. Uncomment to add users
+/*
+Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('register', 'Auth\RegisterController@register');
+*/
+
+// Password Reset Routes...
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+// Confirm Password (added in v6.2)
+Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')->name('password.confirm');
+Route::post('password/confirm', 'Auth\ConfirmPasswordController@confirm');
+
+// Email Verification Routes...
+Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
+Route::get('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')->name('verification.verify'); // v6.x
+/* Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify'); // v5.x */
+Route::get('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');
+
+Route::get('/home', 'EndpointController@index');
+//Route::get('/home', 'HomeController@index')->name('home');
