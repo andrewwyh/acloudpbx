@@ -20,8 +20,12 @@ class EndpointController extends Controller
     {
 
         $ps_endpoints = DB::table('ps_endpoints')
+        ->orderBy('ps_endpoints.context', 'asc')
+        ->orderBy('ps_endpoints.id','asc')
         ->leftJoin('ps_auths','ps_endpoints.id','=','ps_auths.id')
         ->leftJoin('ps_aors','ps_endpoints.id','=', 'ps_aors.id')
+        ->leftJoin('ps_contacts','ps_endpoints.id','=', 'ps_contacts.endpoint')
+        -> select('ps_endpoints.*','ps_auths.username','ps_auths.password','ps_aors.max_contacts','ps_aors.remove_existing','ps_contacts.uri','ps_contacts.user_agent')
         -> get();
 
         return view('endpoints.index',compact('ps_endpoints'));
