@@ -23,6 +23,10 @@ services:
       - "10000-11000:10000-11000/udp"
       - "1314"
     network_mode: "host"
+    logging:
+      options:
+              max-size: "1g"
+
 
   db:
     image: ${POSTGRES_IMAGE:-postgres}:${POSTGRES_IMAGE_VERSION:-11}
