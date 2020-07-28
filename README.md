@@ -1,9 +1,5 @@
-# Asterisk with PostgreSQL Real-time Database
+# Asterisk with Larevel frontend in separate Docker containers
 
-This container set provides the Asterisk 17 PBX with a real-time database from PostgreSQL.
+This project started as a fork from OpusVL/asterisk-pgsql.
 
-You should provide your own `etc/asterisk` content. The files provided allow for a basic asterisk instance that connects to PostgreSQL using ODBC.
-
-The content under the `etc/asterisk/dist` folder contains all the Asterisk sample configuration files.
-
-> Now with functional SIP over TLS.
+A frontend to manipulate the DB and dialplan was written in Laravel.
