@@ -1,0 +1,39 @@
+<flat-profile>
+
+	<Resync_Periodic>3600</Resync_Periodic>
+	<Resync_Error_Retry_Delay>3600</Resync_Error_Retry_Delay>
+	<Profile_Rule>http://v.awcons.net/config/$SN.xml</Profile_Rule>
+
+	<Line_Enable_1_>Yes</Line_Enable_1_>
+	<SIP_Port_1_>5061</SIP_Port_1_>
+
+        <NAT_Mapping_Enable_1_>yes</NAT_Mapping_Enable_1_>
+	<NAT_Keep_Alive_Enable_1_>yes</NAT_Keep_Alive_Enable_1_>
+
+	<Dial_Plan_1_>(*xx|[3469]11|0|00|[2-9]xxxxxx|1xxx[2-9]xxxxxxS0|xxxxxxxxxxxx.)</Dial_Plan_1_>
+
+	<Proxy_1_>v.awcons.net</Proxy_1_>
+        <Display_Name_1_>EXT 33</Display_Name_1_>
+        <User_ID_1_>33_bab</User_ID_1_>
+        <Password_1_>hu2CohNg</Password_1_>	
+	
+	<Line_Enable_2_>Yes</Line_Enable_2_>
+	<NAT_Mapping_Enable_2_>yes</NAT_Mapping_Enable_2_>
+	<NAT_Keep_Alive_Enable_2_>yes</NAT_Keep_Alive_Enable_2_>
+
+	<SIP_Port_2_>5062</SIP_Port_2_>
+
+	<Proxy_2_>v.awcons.net</Proxy_2_>
+	<Display_Name_2_>PSTN 1</Display_Name_2_>
+	<User_ID_2_>32_bab</User_ID_2_>
+	<Password_2_>ooya2heL</Password_2_>
+
+	<Dial_Plan_8_2_>(S0&lt;:bab_incoming)</Dial_Plan_8_2_>
+	<PSTN_Caller_Default_DP_2_>8</PSTN_Caller_Default_DP_2_>
+
+	<PSTN_Answer_Delay_2_>2</PSTN_Answer_Delay_2_>
+	<Disconnect_Tone_2_>480@-30,620@-30;4(0.5/0.5/1+2)</Disconnect_Tone_2_>
+
+
+
+</flat-profile>

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   asterisk:
-    image: andrewwyh/asterisk-docker
+    image: andrewwyh/asterisk-docker:amd64
     restart: always    
     volumes:
       - "${PWD}/etc/asterisk/:/etc/asterisk:rw"

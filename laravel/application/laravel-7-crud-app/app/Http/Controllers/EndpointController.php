@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\ps_endpoints;
 use App\ps_aors;
 use App\ps_auth;
+use App\Dialplan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +21,7 @@ class EndpointController extends Controller
     {
 
         $ps_endpoints = DB::table('ps_endpoints')
-        ->orderBy('ps_endpoints.context', 'asc')
+        ->orderBy('ps_endpoints.company', 'asc')
         ->orderBy('ps_endpoints.id','asc')
         ->leftJoin('ps_auths','ps_endpoints.id','=','ps_auths.id')
         ->leftJoin('ps_aors','ps_endpoints.id','=', 'ps_aors.id')
@@ -52,6 +53,7 @@ class EndpointController extends Controller
         $request->validate([
             'id'=>'required',
             'context'=>'required',
+            'company'=>'required',
             'password' => 'required',
             'pickup_group' => 'required'
         ]);
@@ -63,6 +65,7 @@ class EndpointController extends Controller
             'aors' => $request->get('id'),
             'auth' => $request->get('id'), 
             'context' => $request->get('context'),
+            'company' => $request->get('company'),
             'disallow' => "all",
             'allow' => "g722,ulaw",
             'direct_media' => "no",
@@ -84,14 +87,30 @@ class EndpointController extends Controller
             'id' => $request->get('id'),
             'max_contacts' => "1",
             'remove_existing' => "yes",
-            'maximum_expiration' => "60"
         ]);
 
+        $dialplan = new Dialplan([
+            'ext_number' => $request->get('id'),
+            'company' => $request->get('company'),
+            'technology' => 'PJSIP',
+            'dialstring1' => $request->get('id'),
+            'context' => $request->get('context'),
+        ]);
+        
         $endpoint->save();
         $auth->save();
         $aors->save();
+        $dialplan->save();
 
         return redirect('/endpoints')->with('success', 'Contact saved!');
+        
+        /* commented due to extensions.d file saving not used anymore
+        $contents = "Contents\n";
+        $contents .= "two";
+        Storage::disk('local')->put('/extensions.d/file.txt', $contents);
+
+        print ("<html>Saved!</html>");
+        */
     }
 
     /**
@@ -129,6 +148,7 @@ class EndpointController extends Controller
         $request->validate([
             'id'=>'required',
             'context'=>'required',
+            'company'=>'required',
             'password' => 'required',
             'pickup_group' => 'required'
         ]);
@@ -136,11 +156,13 @@ class EndpointController extends Controller
         $endpoint = ps_endpoints::find($id);
         $auth = ps_auth::find($id);
         $aors = ps_aors::find($id);
+        $dialplan= Dialplan::where('ext_number', $id)->first();
 
         $endpoint->id = $request->get('id');
         $endpoint->auth=$request->get('id');
         $endpoint->aors=$request->get('id');
         $endpoint->context = $request->get('context');
+        $endpoint->company = $request->get('company');
         $endpoint->pickup_group = $request->get('pickup_group');
         $endpoint->save();
 
@@ -153,6 +175,13 @@ class EndpointController extends Controller
         $aors->maximum_expiration="60";
         $aors->save();
 
+        $dialplan->ext_number = $request->get('id');
+        $dialplan->company = $request->get('company');
+        $dialplan->technology = "PJSIP";
+        $dialplan->dialstring1 = $request->get('id');
+        $dialplan->context = $request->get('context');
+        $dialplan->save();
+        
         print "ID is ".$request->get('id');
         print "Context is ".$request->get('context');
 
@@ -171,10 +200,12 @@ class EndpointController extends Controller
         $endpoint = ps_endpoints::find($id);
         $auth = ps_auth::find($id);
         $aors = ps_aors::find($id);
+        $dialplan= Dialplan::where('ext_number', $id)->first();
 
         $endpoint->delete();
         $auth->delete();
         $aors->delete();
+        $dialplan->delete();
 
         return redirect('/endpoints')->with('success', 'Contact deleted!');
     }

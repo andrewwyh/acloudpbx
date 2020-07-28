@@ -19,7 +19,8 @@
   <table class="table table-striped">
     <thead>
         <tr>
-          <td>Company (context)</td>
+          <td>Company</td>
+          <td>Context</td>
           <td>ID</td>
           <td>Auth Username</td>
           <td>Auth Password</td>
@@ -31,7 +32,8 @@
     <tbody>
     @foreach($ps_endpoints as $endpoint)
         <tr>
-            <td><a href="/contexts/?context={{$endpoint->context}}">{{$endpoint->context}}</a> </td>
+            <td><a href="/company/?company={{$endpoint->company}}">{{$endpoint->company}}</a> </td>
+            <td>{{$endpoint->context}}</td>
             <td>{{$endpoint->id}}</td>
             <td>{{$endpoint->username}} </td>
             <td>{{$endpoint->password}} </td>

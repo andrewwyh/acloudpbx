@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'EndpointController@index')->middleware('auth');
 
 Route::resource('endpoints', 'EndpointController')->middleware('auth');
-Route::get('/contexts', 'ContextController@show')->middleware('auth');
+Route::get('/company', 'CompanyController@show')->middleware('auth');
 
 //Not using the default routes
 /*Auth::routes([
@@ -32,10 +32,10 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 // Registration Routes...
 // Disabled since our website is public. Uncomment to add users
-/*
+
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 'Auth\RegisterController@register');
-*/
+
 
 // Password Reset Routes...
 Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');

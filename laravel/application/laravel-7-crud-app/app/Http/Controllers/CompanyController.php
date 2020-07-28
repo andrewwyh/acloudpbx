@@ -9,11 +9,11 @@ use App\ps_auth;
 //use App\ps_contacts;
 use Illuminate\Support\Facades\DB;
 
-class ContextController extends Controller
+class CompanyController extends Controller
 {
     public function index()
     {
-        return view('endpoints.context');
+        return view('endpoints.company');
     }
 
     public function show(Request $request)
@@ -22,10 +22,10 @@ class ContextController extends Controller
             'context'=>'required',
         ]);
         */
-        $context = $request->get('context');
-        $endpoint = ps_endpoints::find($context);
+        $company = $request->get('company');
+        $endpoint = ps_endpoints::find($company);
             
-            if ($context==""){
+            if ($company==""){
                 $ps_endpoints = DB::table('ps_endpoints')
                 ->leftJoin('ps_auths','ps_endpoints.id','=','ps_auths.id')
                 ->leftJoin('ps_aors','ps_endpoints.id','=', 'ps_aors.id')
@@ -38,7 +38,7 @@ class ContextController extends Controller
                 ->leftJoin('ps_aors','ps_endpoints.id','=', 'ps_aors.id')
                 ->leftJoin('ps_contacts','ps_endpoints.id','=', 'ps_contacts.endpoint')
                 -> select('ps_endpoints.*','ps_auths.username','ps_auths.password','ps_aors.max_contacts','ps_aors.remove_existing','ps_contacts.uri','ps_contacts.user_agent')
-                ->where ('ps_endpoints.context','=',$context)
+                ->where ('ps_endpoints.company','=',$company)
                 -> get();
             }
             
@@ -48,7 +48,7 @@ class ContextController extends Controller
                 -> get();
             */
 
-            return view('endpoints.context',compact('ps_endpoints','context'));
+            return view('endpoints.company',compact('ps_endpoints','company'));
 
         
     }
