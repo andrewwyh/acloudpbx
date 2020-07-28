@@ -1,0 +1,110 @@
+version: '3'
+
+services:
+  asterisk:
+    image: andrewwyh/asterisk-docker:amd64
+    restart: always    
+    volumes:
+      - "${PWD}/etc/asterisk/:/etc/asterisk:rw"
+      - "${PWD}/log/asterisk:/var/log/asterisk"
+      - "${PWD}/odbc.ini:/etc/odbc.ini"
+      - "${PWD}/odbcinst.ini:/etc/odbcinst.ini"
+      - "${PWD}/.pgsocket:/var/run/postgresql"
+      - "${PWD}/log/supervisor:/var/log/supervisor"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"  
+    ports:
+      - "5060:5060/tcp"
+      - "5060:5060/udp"
+      - "5061:5061/tcp"
+      - "5061:5061/udp"
+      - "5038:5038"
+      - "8088:8088"
+      - "10000-11000:10000-11000/udp"
+      - "1314"
+    network_mode: "host"
+    logging:
+      options:
+              max-size: "1g"
+
+
+  db:
+    image: ${POSTGRES_IMAGE:-postgres}:${POSTGRES_IMAGE_VERSION:-11}
+    #user: ${UID}:${GID}
+    environment:
+      POSTGRES_DB:  "${POSTGRES_DB:-postgres}"
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "rootpass"
+    volumes:
+      - "${PWD}/.pgdata:/var/lib/postgresql/data"
+      - "${PWD}/.pgsocket:/var/run/postgresql"
+      - "${PWD}/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"  
+    ports:
+      - "5432:5432"
+    restart: always    
+  phppgadmin:
+    restart: always
+    image: dockage/phppgadmin:latest
+    ports:
+    - "81:80"
+    - "443:443"
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"  
+    environment:
+    - PHP_PG_ADMIN_SERVER_DESC=PostgreSQL
+    - PHP_PG_ADMIN_SERVER_HOST=db
+    - PHP_PG_ADMIN_SERVER_PORT=5432
+    - PHP_PG_ADMIN_SERVER_SSL_MODE=allow
+    - PHP_PG_ADMIN_SERVER_DEFAULT_DB=template1
+    - PHP_PG_ADMIN_SERVER_PG_DUMP_PATH=/usr/bin/pg_dump
+    - PHP_PG_ADMIN_SERVER_PG_DUMPALL_PATH=/usr/bin/pg_dumpall
+    - PHP_PG_ADMIN_DEFAULT_LANG=auto
+    - PHP_PG_ADMIN_AUTO_COMPLETE=default on
+    - PHP_PG_ADMIN_EXTRA_LOGIN_SECURITY=false
+    - PHP_PG_ADMIN_OWNED_ONLY=false
+    - PHP_PG_ADMIN_SHOW_COMMENTS=true
+    - PHP_PG_ADMIN_SHOW_ADVANCED=false
+    - PHP_PG_ADMIN_SHOW_SYSTEM=false
+    - PHP_PG_ADMIN_MIN_PASSWORD_LENGTH=1
+    - PHP_PG_ADMIN_LEFT_WIDTH=200
+    - PHP_PG_ADMIN_THEME=default
+    - PHP_PG_ADMIN_SHOW_OIDS=false
+    - PHP_PG_ADMIN_MAX_ROWS=30
+    - PHP_PG_ADMIN_MAX_CHARS=50
+    - PHP_PG_ADMIN_USE_XHTML_STRICT=false
+    - PHP_PG_ADMIN_HELP_BASE=http://www.postgresql.org/docs/%s/interactive/
+    - PHP_PG_ADMIN_AJAX_REFRESH=3
+  fail2ban:
+    image: crazymax/fail2ban:latest
+    container_name: fail2ban
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - "./etc/fail2ban/fail2ban-data:/data"
+      - "./log:/var/log:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"  
+    env_file:
+      - "./etc/fail2ban/fail2ban.env"
+    restart: always
+  webserver:
+      image: nginx:alpine
+      restart: always    
+      working_dir: /application
+      volumes:
+          - ./laravel/application:/application
+          - ./laravel/sourcefiles/nginx:/etc/nginx/conf.d
+      ports:
+       - "80:80"
+  php-fpm:
+      build: ./laravel/sourcefiles/php-fpm
+      restart: always    
+      working_dir: /application
+      volumes:
+        - ./laravel/application:/application
+        - ./laravel/sourcefiles/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
