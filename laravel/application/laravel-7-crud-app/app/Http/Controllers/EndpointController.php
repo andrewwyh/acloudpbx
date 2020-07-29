@@ -51,19 +51,21 @@ class EndpointController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id'=>'required',
+            'ext_number'=>'required',
             'context'=>'required',
             'company'=>'required',
             'password' => 'required',
             'pickup_group' => 'required'
         ]);
+        
+        $ext_company = $request->get('ext_number')."_".$request->get('company');
 
         $endpoint = new ps_endpoints([
     
-            'id' => $request->get('id'),
+            'id' => $ext_company,
             'transport' => "transport-udp",
-            'aors' => $request->get('id'),
-            'auth' => $request->get('id'), 
+            'aors' => $ext_company,
+            'auth' => $ext_company, 
             'context' => $request->get('context'),
             'company' => $request->get('company'),
             'disallow' => "all",
@@ -77,30 +79,40 @@ class EndpointController extends Controller
         ]);
 
         $auth = new ps_auth([
-            'id' => $request->get('id'),
+            'id' => $ext_company,
             'auth_type' => "userpass",
-            'username' => $request->get('id'),
+            'username' => $ext_company,
             'password' => $request->get('password')
         ]);
         
         $aors = new ps_aors([
-            'id' => $request->get('id'),
+            'id' => $ext_company,
             'max_contacts' => "1",
             'remove_existing' => "yes",
         ]);
 
         $dialplan = new Dialplan([
-            'ext_number' => $request->get('id'),
+            'ext_number' => $ext_company,
             'company' => $request->get('company'),
             'technology' => 'PJSIP',
-            'dialstring1' => $request->get('id'),
+            'dialstring1' => $ext_company,
             'context' => $request->get('context'),
         ]);
         
+        $dialplan2 = new Dialplan([
+            'ext_number' => $request->get('ext_number'),
+            'company' => $request->get('company'),
+            'technology' => 'PJSIP',
+            'dialstring1' => $ext_company,
+            'context' => $request->get('context'),
+        ]);
+        
+
         $endpoint->save();
         $auth->save();
         $aors->save();
         $dialplan->save();
+        $dialplan2->save();
 
         return redirect('/endpoints')->with('success', 'Contact saved!');
         
@@ -132,8 +144,21 @@ class EndpointController extends Controller
     public function edit($id)
     {
         $endpoint = ps_endpoints::find($id);
+        $id_array=preg_split("/_/",$endpoint->id);
+
+        $ext_number = $id_array[0];
+        $company = $id_array[1];
+
         $auth = ps_auth::find($id);
-        return view('endpoints.edit', compact('endpoint'), compact('auth'));
+
+        $dialplan = Dialplan::where('ext_number',$ext_number)->first();
+
+        return view('endpoints.edit')
+            ->with (compact('endpoint'))
+            ->with (compact('auth')) 
+            ->with (compact('ext_number'))
+            ->with (compact('company'))
+            ->with (compact('dialplan'));
     }
 
     /**
@@ -146,47 +171,31 @@ class EndpointController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id'=>'required',
-            'context'=>'required',
-            'company'=>'required',
             'password' => 'required',
+            'dialled' => 'required',
             'pickup_group' => 'required'
         ]);
 
+        $ext_company = $request->get('ext_number')."_".$request->get('company');
+        $ext_number = $request->get('ext_number').
+
         $endpoint = ps_endpoints::find($id);
         $auth = ps_auth::find($id);
-        $aors = ps_aors::find($id);
-        $dialplan= Dialplan::where('ext_number', $id)->first();
+        $dialplan = Dialplan::where('ext_number',$request->get('dialled'))->first();
 
-        $endpoint->id = $request->get('id');
-        $endpoint->auth=$request->get('id');
-        $endpoint->aors=$request->get('id');
-        $endpoint->context = $request->get('context');
-        $endpoint->company = $request->get('company');
         $endpoint->pickup_group = $request->get('pickup_group');
         $endpoint->save();
 
-        $auth->id = $request->get('id');
-        $auth->username = $request->get('id');
         $auth->password = $request->get('password');
         $auth->save();
-
-        $aors->id = $request->get('id');
-        $aors->maximum_expiration="60";
-        $aors->save();
-
-        $dialplan->ext_number = $request->get('id');
-        $dialplan->company = $request->get('company');
-        $dialplan->technology = "PJSIP";
-        $dialplan->dialstring1 = $request->get('id');
-        $dialplan->context = $request->get('context');
+      
+        $dialplan->ext_number = $request->get('dialled');
         $dialplan->save();
-        
+
         print "ID is ".$request->get('id');
         print "Context is ".$request->get('context');
 
         return redirect('endpoints')->with('success','Contact Edited!');
-
     }
 
     /**
@@ -200,13 +209,12 @@ class EndpointController extends Controller
         $endpoint = ps_endpoints::find($id);
         $auth = ps_auth::find($id);
         $aors = ps_aors::find($id);
-        $dialplan= Dialplan::where('ext_number', $id)->first();
+        $dialplan= Dialplan::where('dialstring1', $id)->delete();
 
         $endpoint->delete();
         $auth->delete();
         $aors->delete();
-        $dialplan->delete();
-
+        
         return redirect('/endpoints')->with('success', 'Contact deleted!');
     }
 }

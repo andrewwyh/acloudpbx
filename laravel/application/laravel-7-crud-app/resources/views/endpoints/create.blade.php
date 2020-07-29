@@ -17,13 +17,8 @@
       <form method="post" action="{{ route('endpoints.store') }}">
           @csrf
           <div class="form-group">    
-              <label for="id">Extension number</label>
-              <input type="text" class="form-control" name="id"/>
-          </div>
-
-          <div class="form-group">
-              <label for="context">Context</label>
-              <input type="text" class="form-control" name="context" value="pbx-context"/>
+              <label for="ext_number">Extension number</label>
+              <input type="text" class="form-control" name="ext_number"/>
           </div>
 
           <div class="form-group">
@@ -36,8 +31,13 @@
               <input type="text" class="form-control" name="password"/>
           </div>
           <div class="form-group">
-              <label for="pickup_group">Ring Pickup Group</label>
+              <label for="pickup_group">Pickup Group</label>
               <input type="text" class="form-control" name="pickup_group"/>
+          </div>
+
+          <div class="form-group">
+              <label for="context">Context</label>
+              <input type="text" class="form-control" name="context" value="pbx-context"/>
           </div>
                                
           <button type="submit" class="btn btn-primary">Add Endpoint</button>
