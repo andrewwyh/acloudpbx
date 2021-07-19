@@ -20,27 +20,32 @@
             @csrf
             <div class="form-group">
 
-                <label for="id">Extension Number</label>
-                <input type="text" class="form-control" name="id" value={{ $endpoint->id }} />
+                <label for="ext_number">Extension Number</label>
+                <input type="text" class="form-control" name="ext_number" value="{{ $ext_number}}" readonly="readonly"/>
             </div>
 
             <div class="form-group">
                 <label for="company">Company</label>
-                <input type="text" class="form-control" name="company" value={{ $endpoint->company }} />
+                <input type="text" class="form-control" name="company" value="{{ $company }}" readonly="readonly"/>
+            </div>
+
+            <div class="form-group">
+                <label for="dialled">Change dialled number</label>
+                <input type="text" class="form-control" name="dialled" value="{{ $dialplan->ext_number}}" />
             </div>
 
             <div class="form-group">
                 <label for="context">Context</label>
-                <input type="text" class="form-control" name="context" value={{ $endpoint->context }} />
+                <input type="text" class="form-control" name="context" value="{{ $endpoint->context }}" readonly="readonly"/>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="text" class="form-control" name="password" value={{ $auth->password }} />
+                <input type="text" class="form-control" name="password" value="{{ $auth->password }}" />
             </div>
             <div class="form-group">
                 <label for="pickup_group">Ring Pickup Group</label>
-                <input type="text" class="form-control" name="pickup_group" value={{ $endpoint->pickup_group }} />
+                <input type="text" class="form-control" name="pickup_group" value="{{ $endpoint->pickup_group }}" />
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>
