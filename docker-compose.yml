@@ -2,7 +2,7 @@ version: '3'
 
 services:
   asterisk:
-    image: andrewwyh/asterisk-docker:amd64
+    image: andrewwyh/asterisk-docker:latest
     restart: always    
     volumes:
       - "${PWD}/etc/asterisk/:/etc/asterisk:rw"
@@ -22,7 +22,6 @@ services:
       - "8088:8088"
       - "10000-11000:10000-11000/udp"
       - "1314"
-    network_mode: "host"
     logging:
       options:
               max-size: "1g"
