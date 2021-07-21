@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'EndpointController@index')->middleware('auth');
 
 Route::resource('endpoints', 'EndpointController')->middleware('auth');
-Route::get('/company', 'CompanyController@show')->middleware('auth');
+Route::get('/contexts', 'ContextController@show')->middleware('auth');
 
 //Not using the default routes
 /*Auth::routes([
