@@ -22,13 +22,8 @@
           </div>
 
           <div class="form-group">
-              <label for="context">Context</label>
-              <input type="text" class="form-control" name="context" value="pbx-context"/>
-          </div>
-
-          <div class="form-group">
-              <label for="company">Company</label>
-              <input type="text" class="form-control" name="company"/>
+              <label for="context">Company shortcode (context)</label>
+              <input type="text" class="form-control" name="context"/>
           </div>
 
           <div class="form-group">

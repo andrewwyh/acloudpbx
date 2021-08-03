@@ -25,12 +25,7 @@
             </div>
 
             <div class="form-group">
-                <label for="company">Company</label>
-                <input type="text" class="form-control" name="company" value={{ $endpoint->company }} />
-            </div>
-
-            <div class="form-group">
-                <label for="context">Context</label>
+                <label for="context">Company shortcode (context)</label>
                 <input type="text" class="form-control" name="context" value={{ $endpoint->context }} />
             </div>
 

@@ -12,39 +12,49 @@
   
 <div class="row">
 <div class="col-sm-8 offset-sm-2">
-    <h2 class="display-4">All Extensions</h2>    
+    <h2 class="display-4">Extensions by Company</h2>    
 
 <div style="margin-top:100px"></div>
+
+<h3>Company: {{$context}}</h3>
+
+<div style="margin-top:30px"></div>
 
   <table class="table table-striped">
     <thead>
         <tr>
-          <td>Company (context)</td>
           <td>ID</td>
+          <td>Context</td>
           <td>Auth Username</td>
           <td>Auth Password</td>
+          <td>Aors Max Contacts</td>
+          <td>Aors Remove Existing</td>
           <td>Registered?</td>
+          <td>URI</td>
           <td>User Agent</td>
           <td colspan = 2>Actions</td>
         </tr>
     </thead>
     <tbody>
-    @foreach($ps_endpoints as $endpoint)
+        @foreach($ps_endpoints as $endpoint)
         <tr>
-            <td><a href="/contexts/?context={{$endpoint->context}}">{{$endpoint->context}}</a> </td>
             <td>{{$endpoint->id}}</td>
+            <td>{{$endpoint->context}} </td>
             <td>{{$endpoint->username}} </td>
             <td>{{$endpoint->password}} </td>
+            <td> {{$endpoint->max_contacts}} </td>
+            <td>{{$endpoint->remove_existing}} </td>
             <td>@if (!$endpoint->uri=="")Yes
                 @else No
                 @endif
             </td>
+            <td>{{$endpoint->uri}} </td>
             <td>{{$endpoint->user_agent}} </td>
               <td>
-                <a href="{{ URL::to('endpoints/' . $endpoint->id) . '/edit'}}" class="btn btn-primary">Edit</a>
+              <a href="{{ URL::to('endpoints/' . $endpoint->id) . '/edit'}}" class="btn btn-primary">Edit</a>
             </td>
             <td>
-                <form action="{{ URL::to('endpoints/' . $endpoint->id)}}" method="post">
+            <form action="{{ URL::to('endpoints/' . $endpoint->id)}}" method="post">
                   @csrf
                   @method('DELETE')
                   <button class="btn btn-danger" type="submit">Delete</button>

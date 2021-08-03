@@ -19,7 +19,6 @@ protected $keyType = 'string';
         'aors',
         'auth',
         'context',
-        'company',
         'disallow',
         'allow',
 	'direct_media',
